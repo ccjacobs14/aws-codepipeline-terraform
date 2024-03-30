@@ -2,7 +2,7 @@
 # S3 Bucket
 ################################################################################
 
-resource "aws_s3_bucket" "this" {
+resource "aws_s3_bucket" "that" {
   bucket_prefix = var.application_name
 
   force_destroy = true
@@ -13,8 +13,8 @@ resource "aws_s3_bucket" "this" {
 # S3 Bucket policy
 ################################################################################
 
-resource "aws_s3_bucket_policy" "this" {
-  bucket = aws_s3_bucket.this.id
+resource "aws_s3_bucket_policy" "that" {
+  bucket = aws_s3_bucket.that.id
 
   policy = data.aws_iam_policy_document.s3.json
 }
@@ -24,12 +24,12 @@ resource "aws_s3_bucket_policy" "this" {
 # S3 Bucket server side encryption Configuration
 ################################################################################
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
-  bucket = aws_s3_bucket.this.id
+resource "aws_s3_bucket_server_side_encryption_configuration" "that" {
+  bucket = aws_s3_bucket.that.id
 
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.this.arn
+      kms_master_key_id = aws_kms_key.that.arn
       sse_algorithm     = "aws:kms"
     }
   }
@@ -57,12 +57,12 @@ data "aws_iam_policy_document" "s3" {
       "s3:ListBucket"
     ]
 
-    resources = [aws_s3_bucket.this.arn, "${aws_s3_bucket.this.arn}/*"]
+    resources = [aws_s3_bucket.that.arn, "${aws_s3_bucket.that.arn}/*"]
 
     condition {
       test     = "ArnEquals"
       variable = "AWS:SourceArn"
-      values   = [aws_codepipeline.this.arn, aws_codebuild_project.this.arn]
+      values   = [aws_codepipeline.that.arn, aws_codebuild_project.that.arn]
     }
   }
 }

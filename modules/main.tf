@@ -2,30 +2,30 @@
 # S3
 ##################################################  
 
-resource "aws_s3_bucket" "this" {
+resource "aws_s3_bucket" "that" {
   bucket_prefix = var.tf_state_storage_bucket_name
 }
 
-resource "aws_s3_bucket_versioning" "this" {
-  bucket = aws_s3_bucket.this.id
+resource "aws_s3_bucket_versioning" "that" {
+  bucket = aws_s3_bucket.that.id
   versioning_configuration {
     status = "Enabled"
   }
 }
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
-  bucket = aws_s3_bucket.this.id
+resource "aws_s3_bucket_server_side_encryption_configuration" "that" {
+  bucket = aws_s3_bucket.that.id
 
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.this.arn
+      kms_master_key_id = aws_kms_key.that.arn
       sse_algorithm     = "aws:kms"
     }
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "this" {
-  bucket = aws_s3_bucket.this.id
+resource "aws_s3_bucket_public_access_block" "that" {
+  bucket = aws_s3_bucket.that.id
 
   block_public_acls       = "true"
   block_public_policy     = "true"
@@ -34,8 +34,8 @@ resource "aws_s3_bucket_public_access_block" "this" {
 
 }
 
-resource "aws_s3_bucket_policy" "this" {
-  bucket = aws_s3_bucket.this.id
+resource "aws_s3_bucket_policy" "that" {
+  bucket = aws_s3_bucket.that.id
   policy = data.aws_iam_policy_document.bucket_policy.json
 }
 
@@ -47,7 +47,7 @@ data "aws_iam_policy_document" "bucket_policy" {
     actions = [
       "s3:PutObject"
     ]
-    resources = ["${aws_s3_bucket.this.arn}/*"]
+    resources = ["${aws_s3_bucket.that.arn}/*"]
     principals {
       type        = "AWS"
       identifiers = ["*"]
@@ -65,7 +65,7 @@ data "aws_iam_policy_document" "bucket_policy" {
       variable = "s3:x-amz-server-side-encryption-aws-kms-key-id"
 
       values = [
-        aws_kms_key.this.arn
+        aws_kms_key.that.arn
       ]
     }
     condition {
@@ -84,8 +84,8 @@ data "aws_iam_policy_document" "bucket_policy" {
       "s3:*"
     ]
     resources = [
-      aws_s3_bucket.this.arn,
-    "${aws_s3_bucket.this.arn}/*"]
+      aws_s3_bucket.that.arn,
+    "${aws_s3_bucket.that.arn}/*"]
     principals {
       type        = "AWS"
       identifiers = ["*"]
@@ -106,7 +106,7 @@ data "aws_iam_policy_document" "bucket_policy" {
 # KMS
 ##################################################
 
-resource "aws_kms_key" "this" {
+resource "aws_kms_key" "that" {
   description             = "KMS key for encrption of CloudTrail logs in CW and S3"
   key_usage               = "ENCRYPT_DECRYPT"
   deletion_window_in_days = 30
@@ -115,9 +115,9 @@ resource "aws_kms_key" "this" {
   policy                  = data.aws_iam_policy_document.key_policy.json
 }
 
-resource "aws_kms_alias" "this" {
+resource "aws_kms_alias" "that" {
   name          = format("alias/%s", var.aws_kms_alias)
-  target_key_id = aws_kms_key.this.key_id
+  target_key_id = aws_kms_key.that.key_id
 }
 
 data "aws_iam_policy_document" "key_policy" {
@@ -142,7 +142,7 @@ data "aws_iam_policy_document" "key_policy" {
 # DynamoDB
 ##################################################
 
-resource "aws_dynamodb_table" "this" {
+resource "aws_dynamodb_table" "that" {
   name         = var.tf_state_storage_dynamodb_lock_name
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"

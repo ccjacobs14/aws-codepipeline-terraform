@@ -4,12 +4,12 @@
 
 terraform {
   backend "s3" {
-    bucket = "terraform-state-storage20231207201209834200000002" 
-    region = "eu-west-2"
+    bucket = "terraform-state-storage-c1414103443790" 
+    region = "us-east-1"
     key    = "global/s3/terraform.tfstate"
-    dynamodb_table = "terraform-state-storage"
+    dynamodb_table = "terraform-state-storage-c14"
     encrypt        = true
-    kms_key_id     = "alias/terraform-state-storage"
+    kms_key_id     = "alias/terraform-state-storage-c14"
 
   }
    required_providers {
@@ -21,7 +21,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "eu-west-2"
+  region = "us-east-1"
 }
 
 
@@ -29,7 +29,7 @@ provider "aws" {
 # S3 Bucket
 ################################################################################
 
-#resource "aws_s3_bucket" "this" {
-#  bucket_prefix = "this-is-a-test-bucket-with-a-name-that-is-way-to-long-why"
+#resource "aws_s3_bucket" "that" {
+#  bucket_prefix = "that-is-a-test-bucket-with-a-name-that-is-way-to-long-why-oh-i-cant-believe-it"
 #}
 

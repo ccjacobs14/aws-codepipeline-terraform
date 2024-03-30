@@ -2,18 +2,18 @@
 # CodePipeline
 ################################################################################
 
-resource "aws_codepipeline" "this" {
+resource "aws_codepipeline" "that" {
 
   name     = var.application_name
   role_arn = aws_iam_role.codepipeline.arn
 
   artifact_store {
 
-    location = aws_s3_bucket.this.id
+    location = aws_s3_bucket.that.id
     type     = "S3"
 
     encryption_key {
-      id   = aws_kms_key.this.id
+      id   = aws_kms_key.that.id
       type = "KMS"
     }
   }
@@ -29,7 +29,7 @@ resource "aws_codepipeline" "this" {
       run_order        = 1
       output_artifacts = ["SOURCE_ARTIFACT"]
       configuration = {
-        RepositoryName       = aws_codecommit_repository.this.repository_name
+        RepositoryName       = aws_codecommit_repository.that.repository_name
         BranchName           = "master"
         PollForSourceChanges = true
         OutputArtifactFormat = "CODE_ZIP"
@@ -49,7 +49,7 @@ resource "aws_codepipeline" "this" {
       input_artifacts  = ["SOURCE_ARTIFACT"]
       output_artifacts = ["VALIDATE_ARTIFACT"]
       configuration = {
-        ProjectName = aws_codebuild_project.this.name
+        ProjectName = aws_codebuild_project.that.name
         EnvironmentVariables = jsonencode([
           {
             name  = "ACTION"
@@ -73,7 +73,7 @@ resource "aws_codepipeline" "this" {
       input_artifacts  = ["VALIDATE_ARTIFACT"]
       output_artifacts = ["PLAN_ARTIFACT"]
       configuration = {
-        ProjectName = aws_codebuild_project.this.name
+        ProjectName = aws_codebuild_project.that.name
         EnvironmentVariables = jsonencode([
           {
             name  = "ACTION"
@@ -95,7 +95,7 @@ resource "aws_codepipeline" "this" {
       version   = "1"
       run_order = 3
       configuration = {
-        NotificationArn = aws_sns_topic.this.arn
+        NotificationArn = aws_sns_topic.that.arn
       }
     }
   }
@@ -112,7 +112,7 @@ resource "aws_codepipeline" "this" {
       input_artifacts = ["PLAN_ARTIFACT"]
       output_artifacts = ["APPLY_ARTIFACT"]
       configuration = {
-        ProjectName   = aws_codebuild_project.this.name
+        ProjectName   = aws_codebuild_project.that.name
         EnvironmentVariables = jsonencode([
           {
             name  = "ACTION"
@@ -134,7 +134,7 @@ resource "aws_codepipeline" "this" {
       version   = "1"
       run_order = 5
       configuration = {
-        NotificationArn = aws_sns_topic.this.arn
+        NotificationArn = aws_sns_topic.that.arn
       }
     }
   }
@@ -150,7 +150,7 @@ resource "aws_codepipeline" "this" {
       run_order       = 6
       input_artifacts = ["APPLY_ARTIFACT"]
       configuration = {
-        ProjectName   = aws_codebuild_project.this.name
+        ProjectName   = aws_codebuild_project.that.name
         EnvironmentVariables = jsonencode([
           {
             name  = "ACTION"
@@ -197,7 +197,7 @@ data "aws_iam_policy_document" "codepipeline" {
       "s3:ListBucket",
     ]
 
-    resources = [aws_s3_bucket.this.arn, "${aws_s3_bucket.this.arn}/*"]
+    resources = [aws_s3_bucket.that.arn, "${aws_s3_bucket.that.arn}/*"]
   }
 
   statement {
@@ -210,7 +210,7 @@ data "aws_iam_policy_document" "codepipeline" {
       "codecommit:CancelUploadArchive"
     ]
 
-    resources = [aws_codecommit_repository.this.arn]
+    resources = [aws_codecommit_repository.that.arn]
   }
 
   statement {
@@ -219,7 +219,7 @@ data "aws_iam_policy_document" "codepipeline" {
       "codebuild:BatchGetBuilds",
       "codebuild:StartBuild"
     ]
-    resources = [aws_codebuild_project.this.arn]
+    resources = [aws_codebuild_project.that.arn]
   }
 
   statement {
@@ -228,7 +228,7 @@ data "aws_iam_policy_document" "codepipeline" {
       "SNS:Publish"
     ]
     resources = [
-      aws_sns_topic.this.arn
+      aws_sns_topic.that.arn
     ]
   }
 
@@ -241,7 +241,7 @@ data "aws_iam_policy_document" "codepipeline" {
       "kms:ReEncrypt*",
       "kms:Decrypt"
     ]
-    resources = [aws_kms_key.this.arn]
+    resources = [aws_kms_key.that.arn]
   }
 }
 

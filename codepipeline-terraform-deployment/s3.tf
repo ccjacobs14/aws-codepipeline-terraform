@@ -3,13 +3,13 @@
 ################################################################################
 
 #tfsec:ignore:aws-s3-enable-bucket-logging
-resource "aws_s3_bucket" "this" {
+resource "aws_s3_bucket" "that" {
     #checkov:skip=CKV_AWS_18: "Ensure the S3 bucket has access logging enabled"
     #checkov:skip=CKV_AWS_144: "Ensure that S3 bucket has cross-region replication enabled"
     #checkov:skip=CKV2_AWS_62: "Ensure S3 buckets should have event notifications enabled"
     #checkov:skip=CKV2_AWS_61: "Ensure that an S3 bucket has a lifecycle configuration"
 
-  bucket_prefix = "this-is-a-test-bucket-oct"
+  bucket_prefix = "that-is-a-test-bucket-ccj"
 }
 
 
@@ -17,8 +17,8 @@ resource "aws_s3_bucket" "this" {
 # S3 Versioning Configuration
 ################################################################################
 
-resource "aws_s3_bucket_versioning" "this" {
-  bucket = aws_s3_bucket.this.id
+resource "aws_s3_bucket_versioning" "that" {
+  bucket = aws_s3_bucket.that.id
 
   versioning_configuration {
     status = "Enabled"
@@ -29,12 +29,12 @@ resource "aws_s3_bucket_versioning" "this" {
 # S3 Bucket server side encryption Configuration
 ################################################################################
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
-  bucket = aws_s3_bucket.this.id
+resource "aws_s3_bucket_server_side_encryption_configuration" "that" {
+  bucket = aws_s3_bucket.that.id
 
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.this.arn
+      kms_master_key_id = aws_kms_key.that.arn
       sse_algorithm     = "aws:kms"
     }
   }
@@ -45,8 +45,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
 # S3 Bucket public access block
 ################################################################################
 
-resource "aws_s3_bucket_public_access_block" "this" {
-  bucket = aws_s3_bucket.this.id
+resource "aws_s3_bucket_public_access_block" "that" {
+  bucket = aws_s3_bucket.that.id
 
   block_public_acls       = "true"
   block_public_policy     = "true"

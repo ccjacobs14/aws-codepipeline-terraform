@@ -1,4 +1,4 @@
-resource "aws_ecr_repository" "this" {
+resource "aws_ecr_repository" "that" {
   name                 = var.application_name
   image_tag_mutability = "IMMUTABLE"
 

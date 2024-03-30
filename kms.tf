@@ -9,7 +9,7 @@ data "aws_caller_identity" "current" {}
 # KMS Key
 ##################################################
 
-resource "aws_kms_key" "this" {
+resource "aws_kms_key" "that" {
   key_usage               = "ENCRYPT_DECRYPT"
   deletion_window_in_days = 30
   is_enabled              = true
@@ -21,8 +21,8 @@ resource "aws_kms_key" "this" {
 # KMS Key Policy
 ##################################################
 
-resource "aws_kms_key_policy" "this" {
-  key_id = aws_kms_key.this.id
+resource "aws_kms_key_policy" "that" {
+  key_id = aws_kms_key.that.id
   policy = data.aws_iam_policy_document.key_policy.json
 }
 
